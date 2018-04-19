@@ -1,18 +1,14 @@
 class BaseNnLibError(Exception):
-    def __init__(self):
-        pass
+    pass
 
 
 class InvalidLayerError(BaseNnLibError):
-    def __init__(self):
-        pass
+    pass
 
 
 class InvalidDataError(BaseNnLibError):
-    def __init__(self):
-        pass
+    pass
 
 
 class InvalidCallError(BaseNnLibError):
-    def __init__(self):
-        pass
+    pass
