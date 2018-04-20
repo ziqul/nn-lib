@@ -1,11 +1,12 @@
 import numpy as np
 
 from . import Layer
-from ..activation_functions import Sigmoid
+from ..activation_functions import LeakyReLU
+from ..util import GradientDescentType
 
 
 class Dense(Layer):
-    def __init__(self, neurons_amount, activation_function=Sigmoid()):
+    def __init__(self, neurons_amount, activation_function=LeakyReLU()):
         super(Dense, self).__init__(neurons_amount=neurons_amount)
 
         self._activation_function = activation_function
@@ -34,7 +35,7 @@ class Dense(Layer):
     def get_output(self):
         return list(self._output)
 
-    # !!! error has to be returned_output - expected_output !!!
+    # !!! error has to be in for of (returned_output - expected_output) !!!
     def pass_error(self, error):
         error = np.array(error)
 
@@ -47,10 +48,36 @@ class Dense(Layer):
 
         for j in range(0, len(gradient)):
             for i in range(0, len(self._weights[:, j])):
-                self._weights[i, j] -= gradient[j] * self._learning_rate
+                self._weights[i, j] -= \
+                    gradient[j] * self._learning_rate
 
         self._error = \
             np.dot(error, np.ones((self._output_size, self._input_size)))
 
+    # !!! error has to be in for of (returned_output - expected_output) !!!
+    def pass_errors(self, errors):
+        errors = np.array(errors)
+
+        vectorized_activation_derivative = \
+            np.vectorize(self._activation_function.derivative)
+
+        gradient = \
+            vectorized_activation_derivative(self._prefunction_output) * \
+            errors
+
+        for j in range(0, len(gradient)):
+            for i in range(0, len(self._weights[:, j])):
+                self._weights[i, j] -= \
+                    (np.sum(gradient[:, j]) / len(gradient[:, j])) * \
+                    self._learning_rate
+
+        self._errors = []
+        for error in errors:
+            self._errors = \
+                np.dot(error, np.ones((self._output_size, self._input_size)))
+
     def get_error(self):
         return list(self._error)
+
+    def get_errors(self):
+        return list(self._errors)

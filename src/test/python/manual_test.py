@@ -11,6 +11,7 @@ def main():
 
     model = Model()
     model.add_layer(Input(1))
+    model.add_layer(Dense(3))
     model.add_layer(Dense(2))
     model.build()
 
